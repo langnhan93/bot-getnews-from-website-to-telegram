@@ -3,16 +3,25 @@ from telegram.ext import Updater, CommandHandler, CallbackContext
 import requests
 from bs4 import BeautifulSoup
 
+# token
+updater = Updater('1145431553:AAHfGqlo9HAB852nEsh-ifJc9BGCg3XV2eM')
 
-# define function
-def hi(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text(f'Hello {update.effective_user.last_name}')
-
-
-# kinh doanh
-def getnews_kd():
+###########################
+# def all
+def getnews(getfn):
     list_news = []
-    r = requests.get("https://vnexpress.net/kinh-doanh")
+    r = ""
+
+    if getfn == "kd":
+        r = requests.get("https://vnexpress.net/kinh-doanh")
+    elif getfn =="sh":
+        r = requests.get("https://vnexpress.net/so-hoa")
+    elif getfn == "kh":
+        r = requests.get("https://vnexpress.net/khoa-hoc")
+    elif getfn == "tg":
+        r = requests.get("https://vnexpress.net/the-gioi")
+    elif getfn == "sk":
+        r = requests.get("https://vnexpress.net/suc-khoe")
 
     soup = BeautifulSoup(r.text, 'html.parser')
     mydivs = soup.find_all("h3", {"class": "title-news"})
@@ -22,120 +31,58 @@ def getnews_kd():
         newdict["link"] = new.a.get("href")
         newdict["title"] = new.a.get("title")
         list_news.append(newdict)
-
     return list_news
+
 #
 def news_kd(update: Update, context: CallbackContext) -> None:
-    data = getnews_kd()
-    str1 = ""
-
+    data = getnews("kd")
     for item in data:
-        #str1 += item["title"] + "\n"
         update.message.reply_text(f'{item["title"]}')
-
-# so hoa
-def getnews_sh():
-    list_news = []
-    r = requests.get("https://vnexpress.net/so-hoa")
-
-    soup = BeautifulSoup(r.text, 'html.parser')
-    mydivs = soup.find_all("h3", {"class": "title-news"})
-
-    for new in mydivs:
-        newdict = {}
-        newdict["link"] = new.a.get("href")
-        newdict["title"] = new.a.get("title")
-        list_news.append(newdict)
-
-    return list_news
 #
 def news_sh(update: Update, context: CallbackContext) -> None:
-    data = getnews_sh()
-    str1 = ""
-
+    data = getnews("sh")
     for item in data:
-        #str1 += item["title"] + "\n"
         update.message.reply_text(f'{item["title"]}')
-
-# khoa hoc
-def getnews_kh():
-    list_news = []
-    r = requests.get("https://vnexpress.net/khoa-hoc")
-
-    soup = BeautifulSoup(r.text, 'html.parser')
-    mydivs = soup.find_all("h3", {"class": "title-news"})
-
-    for new in mydivs:
-        newdict = {}
-        newdict["link"] = new.a.get("href")
-        newdict["title"] = new.a.get("title")
-        list_news.append(newdict)
-
-    return list_news
 #
 def news_kh(update: Update, context: CallbackContext) -> None:
-    data = getnews_kh()
-    str1 = ""
-
+    data = getnews("kh")
     for item in data:
-        #str1 += item["title"] + "\n"
         update.message.reply_text(f'{item["title"]}')
-
-# the gioi
-def getnews_tg():
-    list_news = []
-    r = requests.get("https://vnexpress.net/the-gioi")
-
-    soup = BeautifulSoup(r.text, 'html.parser')
-    mydivs = soup.find_all("h3", {"class": "title-news"})
-
-    for new in mydivs:
-        newdict = {}
-        newdict["link"] = new.a.get("href")
-        newdict["title"] = new.a.get("title")
-        list_news.append(newdict)
-
-    return list_news
 #
 def news_tg(update: Update, context: CallbackContext) -> None:
-    data = getnews_tg()
-    str1 = ""
-
+    data = getnews("tg")
     for item in data:
-        #str1 += item["title"] + "\n"
         update.message.reply_text(f'{item["title"]}')
-
-# suc khoe
-def getnews_sk():
-    list_news = []
-    r = requests.get("https://vnexpress.net/suc-khoe")
-
-    soup = BeautifulSoup(r.text, 'html.parser')
-    mydivs = soup.find_all("h3", {"class": "title-news"})
-
-    for new in mydivs:
-        newdict = {}
-        newdict["link"] = new.a.get("href")
-        newdict["title"] = new.a.get("title")
-        list_news.append(newdict)
-
-    return list_news
 #
 def news_sk(update: Update, context: CallbackContext) -> None:
-    data = getnews_sk()
-    str1 = ""
-
+    data = getnews("sk")
     for item in data:
-        #str1 += item["title"] + "\n"
         update.message.reply_text(f'{item["title"]}')
 
 
-
+###########################
 # tienao
-def getnews_tienao():
+def getcoin(getfn):
     list_news = []
-    r = requests.get("https://blogtienao.com/tin-tuc-crypto/")
+    r = ""
 
+    if getfn == "coin":
+        r = requests.get("https://blogtienao.com/tin-tuc-crypto/")
+    elif getfn == "ta":
+        r = requests.get("https://tapchibitcoin.io/tin-tuc")
+        
+    soup = BeautifulSoup(r.text, 'html.parser')
+    mydivs = soup.find_all("div", {"class": "td-module-thumb"})
+
+    for new in mydivs:
+        newdict = {}
+        newdict["link"] = new.a.get("href")
+        newdict["title"] = new.a.get("title")
+        list_news.append(newdict)
+
+    if getfn == "ta":
+        r = requests.get("https://goctienao.com")
+    
     soup = BeautifulSoup(r.text, 'html.parser')
     mydivs = soup.find_all("div", {"class": "td-module-thumb"})
 
@@ -147,54 +94,21 @@ def getnews_tienao():
 
     return list_news
 #
-def news_tienao(update: Update, context: CallbackContext) -> None:
-    data = getnews_tienao()
-    str1 = ""
-
+def news_coin(update: Update, context: CallbackContext) -> None:
+    data = getcoin("coin")
     for item in data:
-        str1 += item["title"] + "\n"
         update.message.reply_text(f'{item["title"]}')
 
-# news_tienao1
-def getnews_tienao1():
-    list_news = []
-    r = requests.get("https://tapchibitcoin.io/tin-tuc")
-
-    soup = BeautifulSoup(r.text, 'html.parser')
-    mydivs = soup.find_all("div", {"class": "td-module-thumb"})
-
-    for new in mydivs:
-        newdict = {}
-        newdict["link"] = new.a.get("href")
-        newdict["title"] = new.a.get("title")
-        list_news.append(newdict)
-
-    r = requests.get("https://goctienao.com")
-
-    soup = BeautifulSoup(r.text, 'html.parser')
-    mydivs = soup.find_all("div", {"class": "td-module-thumb"})
-
-    for new in mydivs:
-        newdict = {}
-        newdict["link"] = new.a.get("href")
-        newdict["title"] = new.a.get("title")
-        list_news.append(newdict)
-
-
-
-    return list_news
 #
-def news_tienao1(update: Update, context: CallbackContext) -> None:
-    data = getnews_tienao1()
-    str1 = ""
-
+def news_ta(update: Update, context: CallbackContext) -> None:
+    data = getcoin("ta")
     for item in data:
-        str1 += item["title"] + "\n"
         update.message.reply_text(f'{item["title"]}')
 
 
+###########################
 # news
-def getnews_news():
+def getEnews():
     list_news = []
     r = requests.get("https://e.vnexpress.net/news/world")
 
@@ -209,56 +123,22 @@ def getnews_news():
 
     return list_news
 #
-def news_news(update: Update, context: CallbackContext) -> None:
-    data = getnews_news()
-    str1 = ""
-
+def news_Enews(update: Update, context: CallbackContext) -> None:
+    data = getEnews()
     for item in data:
-        #str1 += item["title"] + "\n"
         update.message.reply_text(f'{item["title"]}')
 
 
-# TECH
-def getnews_tech():
-    list_news = []
-    r = requests.get("https://techcrunch.com/")
-
-    soup = BeautifulSoup(r.text, 'html.parser')
-    mydivs = soup.find_all("h2", {"class": "post-block__title"})
-
-    for new in mydivs:
-        newdict = {}
-        newdict["link"] = new.a.get("href")
-        newdict["title"] = new.a.get("title")
-        list_news.append(newdict)
-
-    return list_news
-#
-def news_tech(update: Update, context: CallbackContext) -> None:
-    data = getnews_tech()
-    str1 = ""
-
-    for item in data:
-        #str1 += item["title"] + "\n"
-        update.message.reply_text(f'{item["link"]}')
-
-
-# token
-updater = Updater('1145431553:AAHfGqlo9HAB852nEsh-ifJc9BGCg3XV2eM')
-
 # handler
-updater.dispatcher.add_handler(CommandHandler('hi', hi))
 updater.dispatcher.add_handler(CommandHandler('kd', news_kd))
 updater.dispatcher.add_handler(CommandHandler('sh', news_sh))
 updater.dispatcher.add_handler(CommandHandler('kh', news_kh))
 updater.dispatcher.add_handler(CommandHandler('tg', news_tg))
 updater.dispatcher.add_handler(CommandHandler('sk', news_sk))
-updater.dispatcher.add_handler(CommandHandler('news', news_news))
-updater.dispatcher.add_handler(CommandHandler('tech', news_tech))
-updater.dispatcher.add_handler(CommandHandler('tienao', news_tienao))
-updater.dispatcher.add_handler(CommandHandler('tienao1', news_tienao1))
 
-
+updater.dispatcher.add_handler(CommandHandler('coin', news_coin))
+updater.dispatcher.add_handler(CommandHandler('ta', news_ta))
+updater.dispatcher.add_handler(CommandHandler('news', news_Enews))
 
 # end
 updater.start_polling()
